@@ -660,7 +660,7 @@ NOEXPORT void transfer(CLI *c) {
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
     int has_pending=0, prev_has_pending;
 #endif
-    int watchdog=0; /* a counter to detect an infinite loop */
+//    int watchdog=0; /* a counter to detect an infinite loop */
     ssize_t num;
     int err;
     /* logical channels (not file descriptors!) open for read or write */
@@ -880,7 +880,7 @@ NOEXPORT void transfer(CLI *c) {
                 c->ssl_ptr-=(size_t)num;
                 memset(c->ssl_buff+c->ssl_ptr, 0, (size_t)num); /* paranoia */
                 c->sock_bytes+=(size_t)num;
-                watchdog=0; /* reset the watchdog */
+//                watchdog=0; /* reset the watchdog */
             }
         }
 
@@ -900,7 +900,7 @@ NOEXPORT void transfer(CLI *c) {
                 break; /* do not reset the watchdog */
             default:
                 c->sock_ptr+=(size_t)num;
-                watchdog=0; /* reset the watchdog */
+//                watchdog=0; /* reset the watchdog */
             }
         }
 
@@ -928,7 +928,7 @@ NOEXPORT void transfer(CLI *c) {
                 c->sock_ptr-=(size_t)num;
                 memset(c->sock_buff+c->sock_ptr, 0, (size_t)num); /* paranoia */
                 c->ssl_bytes+=(size_t)num;
-                watchdog=0; /* reset the watchdog */
+//                watchdog=0; /* reset the watchdog */
                 break;
             case SSL_ERROR_WANT_WRITE: /* buffered data? */
                 s_log(LOG_DEBUG, "SSL_write returned WANT_WRITE: retrying");
@@ -985,7 +985,7 @@ NOEXPORT void transfer(CLI *c) {
                     break; /* do not reset the watchdog */
                 }
                 c->ssl_ptr+=(size_t)num;
-                watchdog=0; /* reset the watchdog */
+//                watchdog=0; /* reset the watchdog */
                 break;
             case SSL_ERROR_WANT_WRITE:
                 s_log(LOG_DEBUG, "SSL_read returned WANT_WRITE: retrying");
@@ -1103,7 +1103,8 @@ NOEXPORT void transfer(CLI *c) {
         }
 
         /****************************** check watchdog */
-        if(++watchdog>100) { /* loop executes without transferring any data */
+/*
+        if(++watchdog>100) { // loop executes without transferring any data
             s_log(LOG_ERR,
                 "transfer() loop executes not transferring any data");
             s_log(LOG_ERR,
@@ -1138,7 +1139,7 @@ NOEXPORT void transfer(CLI *c) {
                 (long)c->sock_ptr, (long)c->ssl_ptr);
             throw_exception(c, 1);
         }
-
+*/
     } while(sock_open_wr || !(SSL_get_shutdown(c->ssl)&SSL_SENT_SHUTDOWN) ||
         shutdown_wants_read || shutdown_wants_write);
 }
